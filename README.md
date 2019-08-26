@@ -228,15 +228,24 @@ Overview of Technology
 ======================
 
 Build tools - Maven
+
 Language - Java 8
+
 Framework - Spring Boot
+
 JPA persistence - spring boot JPA/Hibernate
+
 Schema management - Liquibase
+
 JSR-303 validation - hibernate-validation
+
 Swagger API documentation - Swagger/Springfox
+
 UI - React
+
 Code Quality - Jacoco - reports available in target/site
-               Sonarqube - (not included in build chain). 
+
+Sonarqube - (not included in build chain). 
 
 References
 ==========
