@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    <changeSet author="andy (generated)" id="1566750429929-1">
+        <preConditions onFail="MARK_RAN">
+        	<not>
+            	<tableExists schemaName="PUBLIC" tableName="game_state"></tableExists>
+            </not>
+        </preConditions>
+
+<!--         <createTable catalogName="kalah" schemaName="PUBLIC" tableName="hibernate_sequence"> -->
+<!--             <column name="sequence_name" type="VARCHAR(255)"> -->
+<!--                 <constraints nullable="false"/> -->
+<!--             </column> -->
+<!--             <column name="next_val" type="INTEGER"> -->
+<!--                 <constraints nullable="false"/> -->
+<!--             </column> -->
+<!--         </createTable> -->
+        <createTable catalogName="kalah" schemaName="PUBLIC" tableName="pit_state">
+            <column name="id" type="BIGINT(19)" autoIncrement="true" incrementBy="1">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="pit_id" type="INT(10)"/>
+            <column name="stones" type="INT(10)"/>
+            <column name="game_id" type="BIGINT(19)"/>
+        </createTable>
+        <createTable catalogName="kalah" schemaName="PUBLIC" tableName="game_state">
+            <column name="game_id" type="BIGINT(19)" autoIncrement="true" incrementBy="1">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="current_player" type="VARCHAR(255)"/>
+            <column name="in_progress" type="BOOLEAN(1)"/>
+            <column name="recent_pit" type="INT(10)"/>
+            <column name="url" type="VARCHAR(255)"/>
+            <column name="winner" type="INT(10)"/>
+        </createTable>
+        <createSequence catalogName="kalah" schemaName="PUBLIC" sequenceName="hibernate_sequence" startValue="1"/>
+<!--         <addPrimaryKey catalogName="kalah" columnNames="id" constraintName="CONSTRAINT_F" schemaName="PUBLIC" tableName="pit_state"/> -->
+<!--         <addPrimaryKey catalogName="kalah" columnNames="game_id" constraintName="CONSTRAINT_8" schemaName="PUBLIC" tableName="game_state"/> -->
+        <addForeignKeyConstraint baseColumnNames="game_id" baseTableCatalogName="kalah" baseTableName="pit_state" baseTableSchemaName="PUBLIC" constraintName="FK9M0N4WRRRPCJSTBOYUWCCU7W2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="game_id" referencedTableCatalogName="kalah" referencedTableName="game_state" referencedTableSchemaName="PUBLIC"/>
+    </changeSet>
+</databaseChangeLog>
