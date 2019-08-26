@@ -31,12 +31,8 @@ public class GameStateJpaTransformer implements JpaTransformer<GameStateJpa, Kal
     @Override
     public GameStateJpa toJpa(KalahGameState source, GameStateJpa target) {
     	final GameStateJpa response = (target == null) ? new GameStateJpa() : target;
-    	response.setCurrentPlayer(source.getCurrentPlayer());
-    	response.setInProgress(source.isInProgress());
-		response.setRecentPit(source.getRecentPit());
-		response.setWinner(source.getWinner());
-		response.setUrl(source.getUrl());
-		response.setGameId(source.getGameId());
+
+    	BeanUtils.copyProperties(source, response, "pits");
 		final KalahPitDecorator gameStatePits = source.getPits();
 
 		gameStatePits.entrySet().forEach(e -> {

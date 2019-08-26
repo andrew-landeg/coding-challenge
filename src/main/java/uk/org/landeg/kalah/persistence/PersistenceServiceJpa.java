@@ -8,9 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import uk.org.landeg.kalah.annotation.JpaTransformerComponent;
 import uk.org.landeg.kalah.components.KalahGameState;
-import uk.org.landeg.kalah.game.KalahPitDecorator;
 import uk.org.landeg.kalah.persistence.domain.GameStateJpa;
-import uk.org.landeg.kalah.persistence.domain.PitStateJpa;
 
 /**
  * Provides JPA persistence.

@@ -30,6 +30,7 @@ public class FinaliseGameKalahAction implements KalahAction {
 		moveStonesToKalah(game, Player.NORTH);
 		moveStonesToKalah(game, Player.SOUTH);
 		game.setInProgress(false);
+		game.setWinner(determineWinner(game));
 	}
 
 	@Override
@@ -44,6 +45,23 @@ public class FinaliseGameKalahAction implements KalahAction {
 			}
 		}
 		return true;
+	}
+
+	private Player determineWinner(KalahGameState game) {
+		int playerSouthScore = (playerScore(game, Player.SOUTH));
+		int playerNorthScore = (playerScore(game, Player.NORTH));
+		if (playerNorthScore == playerSouthScore) {
+			return Player.NONE;
+		}
+		return playerSouthScore > playerNorthScore ? Player.SOUTH : Player.NORTH;
+	}
+
+	/**
+	 * @param game
+	 * @param player
+	 */
+	private int playerScore(KalahGameState game, Player player) {
+		return game.getPits().get(gameBoard.getPlayerKalah().get(player));
 	}
 
 	private void moveStonesToKalah(KalahGameState game, Player player) {

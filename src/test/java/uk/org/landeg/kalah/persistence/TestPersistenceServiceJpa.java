@@ -32,6 +32,7 @@ public class TestPersistenceServiceJpa {
 		game.setInProgress(expectedInProgress);
 		game.setRecentPit(expectedRecentPit);
 		game.setUrl(expectedUrl);
+		game.setWinner(Player.SOUTH);
 		for (int idx = 1 ; idx <= 14; idx++) game.getPits().put(idx,stoneCountProducerBase7.apply(idx));
 		game = persistenceService.save(game);
 		
@@ -40,6 +41,7 @@ public class TestPersistenceServiceJpa {
 		Assert.assertNotNull(game);
 		Assert.assertEquals(expectedRecentPit, game.getRecentPit());
 		Assert.assertEquals(Player.SOUTH, game.getCurrentPlayer());
+		Assert.assertEquals(Player.SOUTH, game.getWinner());
 		Assert.assertEquals(expectedInProgress, game.isInProgress());
 		Assert.assertEquals(expectedUrl, game.getUrl());
 		for (int pitId = 1; pitId <= 14 ; pitId++) {

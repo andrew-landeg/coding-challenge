@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
@@ -20,7 +21,7 @@ import uk.org.landeg.kalah.Constants.Player;
 @Table(name="game_state")
 public class GameStateJpa {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="game_id")
 	private Long gameId;
 
@@ -31,6 +32,7 @@ public class GameStateJpa {
 	@Column(name="in_progress")
 	private Boolean inProgress;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name="winner")
 	private Player winner;
 
@@ -39,12 +41,6 @@ public class GameStateJpa {
 	
 	@Column(name="url")
 	private String url;
-
-
-//	@OneToMany(cascade=CascadeType.ALL, mappedBy="gameId")
-//	@JoinColumn(name="game_id")
-//	@MapKey(name="pitId")
-//	Map<Integer, PitStateJpa> pits = new HashMap<>();
 
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="game")
 	@MapKey(name="pitId")

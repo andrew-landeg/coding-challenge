@@ -121,19 +121,6 @@ public class KalahGameEngine {
 			}
 		}
 
-	/**
-	 * @param game
-	 * @param player
-	 */
-	private int playerScore(KalahGameState game, Player player) {
-		int playerScore = 0;
-		for (int pitId : gameBoard.getPlayerPits().get(player)) {
-			playerScore += game.getPits().get(pitId);
-		};
-		playerScore += game.getPits().get(gameBoard.getPlayerKalah().get(player));
-		return playerScore;
-	}
-
 	private Player inferCurrentPlayer(Integer pitId) {
 		Player player = Player.SOUTH;
 		if (gameBoard.getPlayerPits().get(Player.NORTH).contains(pitId)) {
