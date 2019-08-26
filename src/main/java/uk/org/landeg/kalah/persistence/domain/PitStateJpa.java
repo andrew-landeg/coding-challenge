@@ -1,4 +1,4 @@
-package uk.org.landeg.kalah.persistence;
+package uk.org.landeg.kalah.persistence.domain;
 
 import java.io.Serializable;
 
@@ -81,8 +81,6 @@ public class PitStateJpa implements Serializable{
 		StringBuilder builder = new StringBuilder();
 		builder.append("PitStateJpa [id=");
 		builder.append(id);
-		builder.append(", game=");
-		builder.append(game.getGameId());
 		builder.append(", pitId=");
 		builder.append(pitId);
 		builder.append(", stones=");

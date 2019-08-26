@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import uk.org.landeg.kalah.persistence.domain.GameStateJpa;
 
 public interface GameStateRepository extends CrudRepository<GameStateJpa, Long>{
 	@Query("SELECT g FROM GameStateJpa g LEFT JOIN FETCH g.pits WHERE g.gameId = ?1")

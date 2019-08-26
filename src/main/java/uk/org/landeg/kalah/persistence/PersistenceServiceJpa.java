@@ -2,30 +2,53 @@ package uk.org.landeg.kalah.persistence;
 
 import java.util.Optional;
 
-
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.org.landeg.kalah.annotation.JpaTransformerComponent;
 import uk.org.landeg.kalah.components.KalahGameState;
 import uk.org.landeg.kalah.game.KalahPitDecorator;
+import uk.org.landeg.kalah.persistence.domain.GameStateJpa;
+import uk.org.landeg.kalah.persistence.domain.PitStateJpa;
 
+/**
+ * Provides JPA persistence.
+ * 
+ * @author andy
+ *
+ */
 @Service
-public class PersistenceServiceJpa implements PersistenceService{
+public class PersistenceServiceJpa implements PersistenceService {
 	@Autowired
-	GameStateRepository repo;
+    GameStateRepository repo;
+
+	@Autowired
+	@JpaTransformerComponent(GameStateJpa.class)
+	JpaTransformer<GameStateJpa, KalahGameState> gameStateTransformer;
 	
+	/**
+	 * Find the game state with the specified ID
+	 * 
+	 * @param id the id of the game to find
+	 * @return {@link Optional} of a {@link KalahGameState}
+	 */
 	@Override
 	@Transactional
 	public Optional<KalahGameState> findById(Long id) {
 		return repo.findById(id)
-			.map(jpa -> fromJpa(jpa, new KalahGameState()))
+			.map(jpa -> gameStateTransformer.fromJpa(jpa, new KalahGameState()))
 			.map(Optional::of)
 			.orElse(Optional.empty());
 	}
 
+	/**
+	 * Saves the specified game state with associated pits
+	 * 
+	 * @param game the game to save.
+	 * @return the a {@link KalahGameState} representing the saved instance of the game.
+	 * 
+	 */
 	@Override
 	@Transactional
 	public KalahGameState save(KalahGameState game) {
@@ -36,42 +59,8 @@ public class PersistenceServiceJpa implements PersistenceService{
 			jpa = repo.findById(game.getGameId())
 					.orElse(new GameStateJpa());
 		}
-		toJpa(game, jpa);
+		gameStateTransformer.toJpa(game, jpa);
 		jpa = repo.save(jpa);
-		return fromJpa(jpa, new KalahGameState()); 
-	}
-	
-	
-	//TODO - [time constraint] should really separate this out into separate transformer class.
-	// This will be easier to maintain and unit tests.
-	private KalahGameState fromJpa(final GameStateJpa jpa, final KalahGameState business) {
-		BeanUtils.copyProperties(jpa, business);
-		jpa.getPits().values().forEach(pitJpa -> business.getPits().put(pitJpa.getPitId(), pitJpa.getStones()));
-		return business;
-	}
-
-	//TODO - [time constraint] should really separate this out into separate transformer class.
-	// This will be easier to maintain and unit tests.
-	private GameStateJpa toJpa(final KalahGameState business, final GameStateJpa jpa) {
-		jpa.setCurrentPlayer(business.getCurrentPlayer());
-		jpa.setInProgress(business.isInProgress());
-		jpa.setRecentPit(business.getRecentPit());
-		jpa.setWinner(business.getWinner());
-		jpa.setUrl(business.getUrl());
-		jpa.setGameId(business.getGameId());
-		final KalahPitDecorator pits = business.getPits();
-		pits.entrySet().forEach(e -> {
-			Integer pitId = e.getKey();
-			Integer stoneCount = e.getValue();
-			PitStateJpa pitJpa = jpa.getPits().get(pitId);
-			// update the pit record stone count, create new record if needed.
-			if (pitJpa == null) {
-				pitJpa = new PitStateJpa(jpa, pitId, stoneCount);
-			} else {
-				pitJpa.setStones(stoneCount);
-			}
-			jpa.getPits().put(pitId, pitJpa);
-		});
-		return jpa;
+		return gameStateTransformer.fromJpa(jpa, null);
 	}
 }

@@ -5,8 +5,6 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -17,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -27,10 +24,11 @@ import uk.org.landeg.kalah.api.model.PerformMoveResponseModel;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
 /**
  * Test some simple game scenarios end to end.
  *
+ * Full stack tests using the RestTemplate to perform requests.
+ * 
  * TODO: would be nice to flesh these out with a full game.
  *
  * @author Andrew Landeg
@@ -40,9 +38,6 @@ public class GameApiScenarioTests {
 	private static final int MIN_PIT = 1;
 	private static final int MAX_PIT = 14;
 
-	@Autowired
-	MockMvc mvc;
-	
 	@LocalServerPort
 	Integer serverPort;
 
@@ -69,6 +64,15 @@ public class GameApiScenarioTests {
 		Assert.assertTrue(responseModel.getUrl().matches(regex));
 	}
 
+	/**
+	 * Test the outcome of a single valid move.
+	 * 
+	 * assert response is 200
+	 * assert a response payload is sent
+	 * assert game id is present on response
+	 * assert game url is present on response
+	 * assert game status is present and correct
+	 */
 	@Test
 	public void assertSingleValidMoveScenario() {
 		final String gameId = createGame().getId();
@@ -103,6 +107,11 @@ public class GameApiScenarioTests {
 		assertStoneCountInPits(status, 0,7,7,7,7,7,1,6,6,6,6,6,6,0);
 	}
 
+	/**
+	 * Test the outcome of an invalid move.
+	 * 
+	 * PLayers cannot start a move on an empty pit
+	 */
 	@Test
 	public void assertClientExceptionOnPlayEmptyPit() {
 		final String gameId = createGame().getId();
@@ -114,6 +123,11 @@ public class GameApiScenarioTests {
 	}
 	
 
+	/**
+	 * Test the outcome of playing an invalid put ID
+	 *
+	 * Expected - client error.
+	 */
 	@Test
 	public void assertClientExceptionOnInvaidPit() {
 		final String gameId = createGame().getId();

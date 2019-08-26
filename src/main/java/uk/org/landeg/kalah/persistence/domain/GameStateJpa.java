@@ -1,4 +1,4 @@
-package uk.org.landeg.kalah.persistence;
+package uk.org.landeg.kalah.persistence.domain;
 
 import java.util.HashMap;
 import java.util.Map;
