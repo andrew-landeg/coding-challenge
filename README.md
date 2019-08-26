@@ -258,6 +258,15 @@ It's not reactive and probably wont:
 Automated Testing
 ===
 
+Unit tests have been providing offering a reasonable level of coverage and scenarios.
+
+Mockito/Junit is preferred, Spring tests are used when dependency injection is needed.
+
+Full stack Spring tests are used for persistence and API testing.
+
+API tests have been provided to test game behaviour over the REST interfaces.
+
+
 Manual Testing
 ===
 
