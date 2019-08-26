@@ -30,5 +30,5 @@ build/
 .vscode/
 
 ### Node ###
-node_modules
-
+src/main/kalah-ui/node_modules
+src/main/kalah-ui/node

@@ -1,10 +1,23 @@
 package uk.org.landeg.kalah.game.api;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -35,6 +48,7 @@ import uk.org.landeg.kalah.api.model.PerformMoveResponseModel;
  * 
  */
 public class GameApiScenarioTests {
+	Logger log = LoggerFactory.getLogger(this.getClass());
 	private static final int MIN_PIT = 1;
 	private static final int MAX_PIT = 14;
 
@@ -134,6 +148,43 @@ public class GameApiScenarioTests {
 		Assert.assertEquals(HttpStatus.BAD_REQUEST, makeMove(gameId, 20).getStatusCode());
 	}
 
+	
+	@Test
+	public void playGameScenario() throws URISyntaxException, IOException {
+		log.debug("Starting game scenario");
+		final ResponseEntity<CreateGameResponseModel> response = 
+				restTemplate.postForEntity(getGameApi(), null, CreateGameResponseModel.class);
+		final String gameId= response.getBody().getId();
+		log.debug("Created game {}", gameId);
+		PerformMoveResponseModel moveResponse = null;
+		final List<Integer> pitIds = extractMovesFromHarFile();
+
+		for (Integer pitId : pitIds) {
+			final String endpoint = getMakeMoveEndpoint(gameId, pitId);
+			log.debug("making move with pit {} : {}", pitId, endpoint);
+			final HttpEntity<Void> entity = buildHttpEntity();
+			try {
+				final ResponseEntity<PerformMoveResponseModel> httpResponse = 
+						restTemplate.exchange(endpoint, HttpMethod.PUT, entity, PerformMoveResponseModel.class);
+				moveResponse = httpResponse.getBody();
+			} catch (HttpClientErrorException e) {
+				// oops I made some moves out of turn when generating the test set!
+				if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+					log.debug("bad request - playing illegal move for pit {}, ignoring", pitId);
+					// ignore it - 400.
+				} else {
+					throw e;
+				}
+			}
+		}
+		final String expectedSouthScore = "40";
+		final String expectedNorthScore = "32";
+		final String southKalah = "7";
+		final String northKalah = "14";
+		Assert.assertEquals(expectedSouthScore, moveResponse.getStatus().get(southKalah));
+		Assert.assertEquals(expectedNorthScore, moveResponse.getStatus().get(northKalah));
+	}
+
 	private void assertStoneCountInPits(Map<String, String> pits, Integer... stones) {
 		for (int idx = 0 ; idx  < stones.length ; idx++) {
 			final String expected = Integer.toString(stones[idx]);
@@ -176,5 +227,34 @@ public class GameApiScenarioTests {
 
 	private String getMakeMoveEndpoint(final String gameId, final Integer pitId) {
 		return String.format("%s/%s/pits/%d", getGameApi(), gameId, pitId);
+	}
+	
+	private List<Integer> extractMovesFromHarFile() throws IOException {
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("game-scenario.har");
+		if (is == null) {
+			is = this.getClass().getClassLoader().getResourceAsStream("src/test/resources/game-scenario.har");
+		}
+		Assert.assertNotNull(is);
+		
+		Path path = (new File(".").toPath().resolve("/game-scenario.har"));
+		if (!path.toFile().exists()) {
+			path = new File(".").toPath().resolve("./src/test/resources/game-scenario.har");
+		}
+
+		Pattern pattern = Pattern.compile("games\\/\\d+\\/pits\\/(\\d+)");
+
+		return Files.readAllLines(path).stream()
+			.filter(line -> line.contains("/pits/"))
+			.peek(line -> System.out.println(line))
+			.map(line ->  {
+				final Matcher matcher = pattern.matcher(line);
+				if (matcher.find()) {
+					return matcher.group(1);
+				}
+				return null;
+			})
+			.filter(Objects::nonNull)
+			.map(Integer::parseInt)
+			.collect(Collectors.toList());
 	}
 }

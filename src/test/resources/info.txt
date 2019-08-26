@@ -1,0 +1,1 @@
+game-scenario.har - contains moves for 6 stone Kalah resulting in South player win, 40 - 32
