@@ -20,8 +20,8 @@ Required: You will need the maven build tool and a Java 8 runtime available on y
 
 **What's Included**
 Source code for;
-1 Spring Boot backend application offering up a REST API to play the game Kalah
-2 A bare-bones UI for playing the game that can be optionally included in the build.
+1. Spring Boot backend application offering up a REST API to play the game Kalah
+2. A bare-bones UI for playing the game that can be optionally included in the build.
 **Obtain Source**
 Obtain the source code from Github (either clone with the git tool or download as a zipfile an unpack it locally).
 
@@ -48,8 +48,11 @@ Run the application with maven;
 
 `mvn clean spring-boot:run`
 
+
 How To play
 -----------
+
+By default, the server will be available at `http://localhost:8080`
 
 Create a game;
 `POST http://<host>:<port>/games` 
@@ -71,14 +74,14 @@ This provides support only for the MySQL database.
 
 **To run in production mode**:
 You must create a database.
-1 Create a database in MySQL;
+1. Create a database in MySQL;
 `mysql> create database kalah`
  
-2 Setup environment variables (replace with you credentials/environement)
-`KALAH_DB_USER=your-user`
-`KALAH_DB_PASSWORD=your-password`
-`KALAH_DB_HOST=localhost`
-`KALAH_DB_NAME=kalah`
+2. Setup environment variables (replace with you credentials/environement)
+- `KALAH_DB_USER=your-user`
+- `KALAH_DB_PASSWORD=your-password`
+- `KALAH_DB_HOST=localhost`
+- `KALAH_DB_NAME=kalah`
 
 
 `java -jar [path-to-jar-file] -Dspring.profiles.active=prod`
@@ -131,7 +134,7 @@ API
 ---
 
 The provided gameplay interface adheres to the original specifications;
-Swagger documentation is provided and can be accessed at http://<host>:<port>/swagger-ui.html
+Swagger documentation is provided and can be accessed at `http://<host>:<port>/swagger-ui.html`
 
 Create a game;
 `POST http://<host>:<port>/games` 
@@ -156,8 +159,11 @@ Main Components
 Components of the game have been split into logical areas of remit;
 
 **Game related components**;
+
 *immutable* - the characteristics of the game board:  KalahGameBoard
+
 *mutable* - the state of the current game (current player, stones in each pit) KalahGameState
+
 *mechanics* - business logic (making moves, analyising the board state) - KalahActions
 
 **API components**
@@ -177,14 +183,15 @@ Implementations of the `KalahMoveProcessor` defines the logic for performing mov
 `KalahAction` implementations define detection and additional logic for processing move outcomes (Capture stones/extra moves/turn end/game end).
 Kalah actions are executed in a chain following each move and are mutually exclusive with the exception of end game detection which is always executed, regardless of any other condition being processed.
 
-
-
 Determining the URL of games
 ----------------------------
 
-In order to provide a meaningful response when creating a game, the applications web domain (or server IP address) must be known. 
-A spring boot application is not aware of it's external domain name, two strategies have been provided for determining what it is.
+Spring applications aren't aware of their external domain names, this is needed in order to build the game URL in API responses.
+
+Two strategies have been provided for determining what it is.
+
 Firstly, a predefined domain name provider - to use this, set the server.location.url parameter as an environment variable or in your application.configuration.
+
 Secondly it can be derived from incoming requests (this can be unreliable if users are accessing your server from different networks).
 
 This is a simple demonstration of auto configuration.

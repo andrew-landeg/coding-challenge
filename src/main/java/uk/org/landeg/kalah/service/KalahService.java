@@ -56,10 +56,28 @@ public class KalahService {
 		return createGameTransformer.toRest(game);
 	}
 
+	/**
+	 * Retrieve the game the the specified ID
+	 * 
+	 * @param gameId id of the game to retrieve
+	 * @return {@link KalahGameState} representation of the stored game
+	 * @throws KalahGameNotFoundException when game is not found.
+	 */
 	public KalahGameState retrieveGame(Long gameId) {
 		return retrieveGameInternal(gameId);
 	}
 
+	/**
+	 * Performs a move on the game and pit with the specified ID's.
+	 *
+	 * @param gameId id of the game on which to perform a move
+	 * @param pitId id of the pit on which to perform a move
+	 * 
+	 * @return PerformMoveResponseModel describing the updated state of the board.
+	 * 
+	 * @throws KalahGameNotFoundException when game is not found.
+	 * @throws KalahClientException for illegal moves.
+	 */
 	public PerformMoveResponseModel makeMove(Long gameId, Integer pitId) {
 		KalahGameState game = retrieveGameInternal(gameId);
 		gameService.performMove(game, pitId);
