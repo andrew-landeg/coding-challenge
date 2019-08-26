@@ -20,8 +20,11 @@ Required: You will need the maven build tool and a Java 8 runtime available on y
 
 **What's Included**
 Source code for;
-1. Spring Boot backend application offering up a REST API to play the game Kalah
-2. A bare-bones UI for playing the game that can be optionally included in the build.
+
+ 1. Spring Boot backend application offering up a REST API to play the game Kalah
+
+ 2. A bare-bones UI for playing the game that can be optionally included in the build.
+
 **Obtain Source**
 Obtain the source code from Github (either clone with the git tool or download as a zipfile an unpack it locally).
 
@@ -74,15 +77,22 @@ This provides support only for the MySQL database.
 
 **To run in production mode**:
 You must create a database.
-1. Create a database in MySQL;
+
+ 1. Create a database in MySQL;
+
 `mysql> create database kalah`
  
-2. Setup environment variables (replace with you credentials/environement)
+ 2. Setup environment variables (replace with you credentials/environement)
+
 - `KALAH_DB_USER=your-user`
+
 - `KALAH_DB_PASSWORD=your-password`
+
 - `KALAH_DB_HOST=localhost`
+
 - `KALAH_DB_NAME=kalah`
 
+ 3. Run the application with the production mode flag enabled;
 
 `java -jar [path-to-jar-file] -Dspring.profiles.active=prod`
 
@@ -154,11 +164,17 @@ Creates a game initialised with the specified number 'x' of stones in each pit.
 
 Swagger documentation is available at http://<host>:<port>/swagger-ui.html 
 
-Main Components
+Application Architecture
 ---------------
+The applicaton design follows a 3-tier approach;
+
+ 1. Web tier
+ 2. Service tier - business logic, handles gameplay
+ 3. Persistence tier - handles database transactions and entities. 
+
 Components of the game have been split into logical areas of remit;
 
-**Game related components**;
+** Service tier Game related components**;
 
 *immutable* - the characteristics of the game board:  KalahGameBoard
 
@@ -239,6 +255,9 @@ It's not reactive and probably wont:
 * work in Internet Explorer
 * win a beauty contest
 
+Automated Testing
+===
+
 Manual Testing
 ===
 
@@ -316,11 +335,17 @@ There's nothing to stop someone gatecrashing an existing game - above solutions 
 Knowing when it's your move
 ---------------------------
 Websockets could be used to push an "it's your turn" to a player.
+
 Game board could be polled for changes.
 
 Test Imrovement
 ---------------
 Some full game scenario tests would have been nice(time permitting).
+
+**update** a rough and ready implementation has been added which extracts moves from a HAR file.
+
+Would still be nice to test some more scenarios.
+
 
 UI Build process
 ----------------
