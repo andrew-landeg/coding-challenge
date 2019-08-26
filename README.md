@@ -362,11 +362,7 @@ Some full game scenario tests would have been nice(time permitting).
 
 **update** a rough and ready implementation has been added which extracts moves from a HAR file.
 
-Would still be nice to test some more scenarios.
+Further test scenarios can be added from HAR files as required.
 
 
-UI Build process
-----------------
-UI probably shouldn't be embedded in the java project.
- 
 
