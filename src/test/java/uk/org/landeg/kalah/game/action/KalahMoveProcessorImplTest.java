@@ -5,29 +5,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
 
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.org.landeg.kalah.components.KalahGameState;
 import uk.org.landeg.kalah.game.KalahGameBoardStandard;
 import uk.org.landeg.kalah.game.KalahGameEngine;
 import uk.org.landeg.kalah.game.KalahPitDecorator;
 
-@RunWith(MockitoJUnitRunner.class)
-public class KalahMoveProcessorImplTest {
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+@ExtendWith(MockitoExtension.class)
+class KalahMoveProcessorImplTest {
 	@Spy
 	final KalahGameBoardStandard gameBoard = new KalahGameBoardStandard();
 
 	@Spy
 	@InjectMocks
-	final KalahGameEngine gameService = new KalahGameEngine();
+	KalahGameEngine gameEngine;
 
 	@InjectMocks
-	final KalahMoveProcessor action = new KalahMoveProcessorImpl();
+	KalahMoveProcessorImpl action;
 
 	/**
 	 * play stone 2 - expected state:
@@ -35,9 +36,9 @@ public class KalahMoveProcessorImplTest {
 	 *   3 0 4 4 4 3
 	 */
 	@Test
-	public void assertUnremarkableMoveScenario() {
+	void assertUnremarkableMoveScenario() {
 		final KalahGameState game = new KalahGameState();
-		gameService.initialiseGame(game, 3);
+		gameEngine.initialiseGame(game, 3);
 		action.processMove(game, 2);
 		System.out.println(game.getPits());
 		assertPitStoneCount(game, Arrays.asList(3, 0, 4, 4, 4, 3, 0, 3, 3, 3, 3, 3, 3, 0));
@@ -49,9 +50,9 @@ public class KalahMoveProcessorImplTest {
 	 *   3 3 3 3 0 4
 	 */
 	@Test
-	public void assertPassOwnKalahScenario() {
+	void assertPassOwnKalahScenario() {
 		final KalahGameState game = new KalahGameState();
-		gameService.initialiseGame(game, 3);
+		gameEngine.initialiseGame(game, 3);
 		action.processMove(game, 5);
 		System.out.println(game.getPits());
 		assertPitStoneCount(game, Arrays.asList(3, 3, 3, 3, 0, 4, 1, 4, 3, 3, 3, 3, 3, 0));
@@ -63,15 +64,15 @@ public class KalahMoveProcessorImplTest {
 	 *   3 3 3 3 0 4
 	 */
 	@Test
-	public void assertPassOpponentKalahScenario() {
+	void assertPassOpponentKalahScenario() {
 		final KalahGameState game = new KalahGameState();
-		gameService.initialiseGame(game, 3);
+		gameEngine.initialiseGame(game, 3);
 		action.processMove(game, 5);
 		System.out.println(game.getPits());
 		assertPitStoneCount(game, Arrays.asList(3, 3, 3, 3, 0, 4, 1, 4, 3, 3, 3, 3, 3, 0));
 	}
 
-	public void assertPitStoneCount(
+	void assertPitStoneCount(
 			KalahGameState gameState, 
 			final List<Integer> expectedStones) {
 		final KalahPitDecorator pits = gameState.getPits();
@@ -81,7 +82,7 @@ public class KalahMoveProcessorImplTest {
 		for (int idx = 1 ; idx <= pits.size(); idx++) {
 			int actual = gameState.getPits().get(idx);
 			int expected = offsetStonesToCheck.get(idx);
-			Assert.assertEquals("checking pit " + idx, expected, actual);
+			assertThat(expected).isEqualTo(actual);
 		}
 	}
 }

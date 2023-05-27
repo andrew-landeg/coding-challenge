@@ -7,6 +7,8 @@
             </not>
         </preConditions>
 
+        <createSequence catalogName="kalah" schemaName="PUBLIC" sequenceName="hibernate_sequence" startValue="1"/>
+
         <createTable catalogName="kalah" schemaName="PUBLIC" tableName="pit_state">
             <column name="id" type="BIGINT(19)" autoIncrement="true" incrementBy="1">
                 <constraints nullable="false" primaryKey="true"/>
@@ -25,7 +27,16 @@
             <column name="url" type="VARCHAR(255)"/>
             <column name="winner" type="VARCHAR(20)"/>
         </createTable>
-        <createSequence catalogName="kalah" schemaName="PUBLIC" sequenceName="hibernate_sequence" startValue="1"/>
-        <addForeignKeyConstraint baseColumnNames="game_id" baseTableCatalogName="kalah" baseTableName="pit_state" baseTableSchemaName="PUBLIC" constraintName="FK9M0N4WRRRPCJSTBOYUWCCU7W2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="game_id" referencedTableCatalogName="kalah" referencedTableName="game_state" referencedTableSchemaName="PUBLIC"/>
+        <addForeignKeyConstraint baseColumnNames="game_id" baseTableCatalogName="kalah"
+                                 baseTableName="pit_state"
+                                 baseTableSchemaName="PUBLIC"
+                                 constraintName="FK9M0N4WRRRPCJSTBOYUWCCU7W2"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="game_id"
+                                 referencedTableCatalogName="kalah"
+                                 referencedTableName="game_state" referencedTableSchemaName="PUBLIC"/>
     </changeSet>
 </databaseChangeLog>

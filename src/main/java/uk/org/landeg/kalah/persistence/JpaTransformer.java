@@ -3,10 +3,10 @@ package uk.org.landeg.kalah.persistence;
 /**
  * Provide conversion to and from domain and business entities.
  *
- * @param <DOMAIN> the type of domain object
- * @param <BUSINESS> the type of business object
+ * @param <D> the type of domain object
+ * @param <B> the type of business object
  */
-public interface JpaTransformer<DOMAIN, BUSINESS> {
+public interface JpaTransformer<D, B> {
     /**
      * Maps the specified domain instance to the specified target instance.
      *
@@ -14,7 +14,7 @@ public interface JpaTransformer<DOMAIN, BUSINESS> {
      * @param target the target business object
      * @return the business object
      */
-    BUSINESS fromJpa(DOMAIN source, BUSINESS target);
+    B fromJpa(D source, B target);
 
     /**
      * Maps the specified business instance to the specified target domain instance.
@@ -23,5 +23,5 @@ public interface JpaTransformer<DOMAIN, BUSINESS> {
      * @param target the target domain object
      * @return the domain object
      */
-    DOMAIN toJpa(BUSINESS source, DOMAIN target);
+    D toJpa(B source, D target);
 }

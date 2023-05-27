@@ -1,7 +1,7 @@
 package uk.org.landeg.kalah.game.action;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -13,11 +13,11 @@ import uk.org.landeg.kalah.game.KalahPitDecorator;
 
 @Order(10000)
 @Component
+@Slf4j
+@RequiredArgsConstructor
 public class FinaliseGameKalahAction implements KalahAction {
-	Logger log = LoggerFactory.getLogger(this.getClass());
-	
-	@Autowired
-	KalahGameBoard gameBoard;
+
+	private final KalahGameBoard gameBoard;
 
 	@Override
 	public boolean applies(KalahGameState game) {
@@ -67,8 +67,6 @@ public class FinaliseGameKalahAction implements KalahAction {
 	private void moveStonesToKalah(KalahGameState game, Player player) {
 		final int kalahId = gameBoard.getPlayerKalah().get(player);
 		final KalahPitDecorator pits = game.getPits();
-		gameBoard.getPlayerPits().get(player).forEach(pitId -> {
-			pits.increment(kalahId, pits.take(pitId));
-		});
+		gameBoard.getPlayerPits().get(player).forEach(pitId -> pits.increment(kalahId, pits.take(pitId)));
 	}
 }

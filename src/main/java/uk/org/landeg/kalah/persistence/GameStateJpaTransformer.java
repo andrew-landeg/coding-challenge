@@ -39,7 +39,7 @@ public class GameStateJpaTransformer implements JpaTransformer<GameStateJpa, Kal
 			Integer pitId = e.getKey();
 			Integer stoneCount = e.getValue();
 			if (response.getPits() == null) {
-				response.setPits(new HashMap<Integer, PitStateJpa>());
+				response.setPits(new HashMap<>());
 			}
 			PitStateJpa pitJpa = response.getPits().get(pitId);
 			// update the pit record stone count, create new record if needed.

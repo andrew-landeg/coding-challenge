@@ -1,19 +1,18 @@
 package uk.org.landeg.kalah.game.action;
 
-import static org.hamcrest.CoreMatchers.any;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import uk.org.landeg.kalah.CommonTestConfiguration;
 import uk.org.landeg.kalah.Constants.Player;
@@ -21,14 +20,15 @@ import uk.org.landeg.kalah.components.KalahGameState;
 import uk.org.landeg.kalah.game.KalahGameBoard;
 import uk.org.landeg.kalah.game.KalahPitDecorator;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @Import(CommonTestConfiguration.class)
-public class FinishInKalahActionTest {
+class FinishInKalahActionTest {
 	@TestConfiguration
 	static class Config {
 		@Bean
-		KalahAction finishInKalahAction() {
-			return new FinishInKalahAction();
+		@Autowired
+		KalahAction finishInKalahAction(KalahGameBoard gameBoard) {
+			return new FinishInKalahAction(gameBoard);
 		}
 	}
 
@@ -39,7 +39,7 @@ public class FinishInKalahActionTest {
 	KalahAction action;
 
 	@Test
-	public void assertApplicable() {
+	void assertApplicable() {
 		KalahGameState game = Mockito.mock(KalahGameState.class);
 		KalahPitDecorator pits = Mockito.mock(KalahPitDecorator.class);
 		Player player = Player.SOUTH;
@@ -48,11 +48,11 @@ public class FinishInKalahActionTest {
 		when(game.getPits()).thenReturn(pits);
 		when(game.getCurrentPlayer()).thenReturn(player);
 		when(pits.get(kalahSouth)).thenReturn(1);
-		assertTrue(action.applies(game));
+		assertThat(action.applies(game)).isTrue();
 	}
 
 	@Test
-	public void assertNoPlayerChangeOnProcess() {
+	void assertNoPlayerChangeOnProcess() {
 		KalahGameState game = Mockito.mock(KalahGameState.class);
 		Player player = Player.SOUTH;
 		when(game.getCurrentPlayer()).thenReturn(player);

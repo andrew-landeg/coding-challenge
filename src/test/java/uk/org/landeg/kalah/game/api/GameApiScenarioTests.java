@@ -13,9 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +26,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -35,7 +34,11 @@ import org.springframework.web.client.RestTemplate;
 import uk.org.landeg.kalah.api.model.CreateGameResponseModel;
 import uk.org.landeg.kalah.api.model.PerformMoveResponseModel;
 
-@RunWith(SpringRunner.class)
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 /**
  * Test some simple game scenarios end to end.
@@ -47,7 +50,7 @@ import uk.org.landeg.kalah.api.model.PerformMoveResponseModel;
  * @author Andrew Landeg
  * 
  */
-public class GameApiScenarioTests {
+class GameApiScenarioTests {
 	Logger log = LoggerFactory.getLogger(this.getClass());
 	private static final int MIN_PIT = 1;
 	private static final int MAX_PIT = 14;
@@ -59,23 +62,19 @@ public class GameApiScenarioTests {
 
 	private RestTemplate restTemplate = new RestTemplate();
 
-	@Test
-	public void contextLoads() {
-	}
-
 	/**
 	 * Test the create game scenario.
 	 */
 	@Test
-	public void assertCreateGameResponse() {
+	void assertCreateGameResponse() {
 		final ResponseEntity<CreateGameResponseModel> response = 
 				restTemplate.postForEntity(getGameApi(), null, CreateGameResponseModel.class);
 		// COA - response status is 201 (Created)
-		Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertThat(HttpStatus.CREATED).isEqualTo(response.getStatusCode());
 		final CreateGameResponseModel responseModel = response.getBody();
-		Assert.assertNotNull(responseModel);
+		assertThat(responseModel).isNotNull();
 		String regex = (getGameApi() + "/\\d+").replace("/", "\\/");
-		Assert.assertTrue(responseModel.getUrl().matches(regex));
+		assertTrue(responseModel.getUrl().matches(regex));
 	}
 
 	/**
@@ -88,7 +87,7 @@ public class GameApiScenarioTests {
 	 * assert game status is present and correct
 	 */
 	@Test
-	public void assertSingleValidMoveScenario() {
+	void assertSingleValidMoveScenario() {
 		final String gameId = createGame().getId();
 		final String endpoint = getMakeMoveEndpoint(gameId, 1);
 		
@@ -98,25 +97,25 @@ public class GameApiScenarioTests {
 				restTemplate.exchange(endpoint, HttpMethod.PUT, entity, PerformMoveResponseModel.class);
 
 		// COA : assert response is 200
-		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertThat(HttpStatus.OK).isEqualTo(response.getStatusCode());
 		final PerformMoveResponseModel model = response.getBody();
 		// CAO : assert a response payload is sent
-		Assert.assertNotNull(model);
+		assertThat(model).isNotNull();
 		// COA : assert game id is present on response
-		Assert.assertNotNull(model.getId());
-		Assert.assertEquals(gameId, model.getId());
+		assertThat(model.getId()).isNotNull();
+		assertThat(gameId).isEqualTo(model.getId());
 
 		// COA : assert game url is present on response
 		final String expectedEndpoint = getGameApi() + "/" + gameId;
-		Assert.assertNotNull(model.getUrl());
-		Assert.assertEquals(expectedEndpoint, model.getUrl());
+		assertThat(model.getUrl()).isNotNull();
+		assertThat(expectedEndpoint).isEqualTo(model.getUrl());
 		
 		// COA : assert game status is present and correct
 		// (note key and value are both specified as strings)
 		final Map<String, String> status = model.getStatus();
-		Assert.assertNotNull(status);
+		assertThat(status).isNotNull();
 		for (int pitId = MIN_PIT ; pitId <= MAX_PIT ; pitId++) {
-			Assert.assertTrue(status.containsKey(Integer.toString(pitId)));
+			assertTrue(status.containsKey(Integer.toString(pitId)));
 		}
 		assertStoneCountInPits(status, 0,7,7,7,7,7,1,6,6,6,6,6,6,0);
 	}
@@ -127,13 +126,14 @@ public class GameApiScenarioTests {
 	 * PLayers cannot start a move on an empty pit
 	 */
 	@Test
-	public void assertClientExceptionOnPlayEmptyPit() {
+	void assertClientExceptionOnPlayEmptyPit() {
 		final String gameId = createGame().getId();
 		// south player - move pit 1
 		// ... end turn in kalah, extra move this turn...
-		Assert.assertEquals(HttpStatus.OK, makeMove(gameId, 1).getStatusCode());
+		assertThat(makeMove(gameId, 1).getStatusCode()).isEqualTo(HttpStatus.OK);
+
 		// pit 1 is now empty - attempt playing it.
-		Assert.assertEquals(HttpStatus.BAD_REQUEST, makeMove(gameId, 1).getStatusCode());
+		assertThat(makeMove(gameId, 1).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 	
 
@@ -143,14 +143,14 @@ public class GameApiScenarioTests {
 	 * Expected - client error.
 	 */
 	@Test
-	public void assertClientExceptionOnInvaidPit() {
+	void assertClientExceptionOnInvaidPit() {
 		final String gameId = createGame().getId();
-		Assert.assertEquals(HttpStatus.BAD_REQUEST, makeMove(gameId, 20).getStatusCode());
+		assertThat(makeMove(gameId, 20).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 
 	
 	@Test
-	public void playGameScenario() throws URISyntaxException, IOException {
+	void playGameScenario() throws URISyntaxException, IOException {
 		log.debug("Starting game scenario");
 		final ResponseEntity<CreateGameResponseModel> response = 
 				restTemplate.postForEntity(getGameApi(), null, CreateGameResponseModel.class);
@@ -181,15 +181,15 @@ public class GameApiScenarioTests {
 		final String expectedNorthScore = "32";
 		final String southKalah = "7";
 		final String northKalah = "14";
-		Assert.assertEquals(expectedSouthScore, moveResponse.getStatus().get(southKalah));
-		Assert.assertEquals(expectedNorthScore, moveResponse.getStatus().get(northKalah));
+		assertEquals(expectedSouthScore, moveResponse.getStatus().get(southKalah));
+		assertEquals(expectedNorthScore, moveResponse.getStatus().get(northKalah));
 	}
 
 	private void assertStoneCountInPits(Map<String, String> pits, Integer... stones) {
 		for (int idx = 0 ; idx  < stones.length ; idx++) {
 			final String expected = Integer.toString(stones[idx]);
 			final String pitIdStr = Integer.toString(idx + 1);
-			Assert.assertEquals(expected, pits.get(pitIdStr));
+			assertEquals(expected, pits.get(pitIdStr));
 		}
 	}
 
@@ -234,7 +234,7 @@ public class GameApiScenarioTests {
 		if (is == null) {
 			is = this.getClass().getClassLoader().getResourceAsStream("src/test/resources/game-scenario.har");
 		}
-		Assert.assertNotNull(is);
+		assertThat(is).isNotNull();
 		
 		Path path = (new File(".").toPath().resolve("/game-scenario.har"));
 		if (!path.toFile().exists()) {

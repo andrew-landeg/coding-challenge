@@ -229,7 +229,7 @@ Overview of Technology
 
 Build tools - Maven
 
-Language - Java 8
+Language - Java 17
 
 Framework - Spring Boot
 
@@ -261,7 +261,7 @@ It's only available if you built the application with the -Pinclude-ui maven pro
 
 It's only been tested in Chrome.
 
-It's not reactive and probably wont:
+It's not reactive and probably won't:
 * work on a mobile
 * work in Internet Explorer
 * win a beauty contest

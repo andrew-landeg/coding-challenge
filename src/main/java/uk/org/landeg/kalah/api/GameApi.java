@@ -2,9 +2,8 @@ package uk.org.landeg.kalah.api;
 
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,13 +28,13 @@ import uk.org.landeg.kalah.validator.ValidPitIndex;
  * @author Andrew Landeg
  *
  */
+@Slf4j
 @Validated
 @RestController
 @RequestMapping("/games")
+@RequiredArgsConstructor
 public class GameApi {
-	Logger log = LoggerFactory.getLogger(this.getClass());
-
-	@Autowired KalahService kalahWebService;
+	private final KalahService kalahWebService;
 
 	/**
 	 * Requests a new, initialised game be created.

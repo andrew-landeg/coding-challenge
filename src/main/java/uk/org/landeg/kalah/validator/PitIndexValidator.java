@@ -8,11 +8,11 @@ import uk.org.landeg.kalah.game.KalahGameBoard;
 import uk.org.landeg.kalah.game.KalahGameBoardStandard;
 
 public class PitIndexValidator implements ConstraintValidator<ValidPitIndex, Integer>{
-	final KalahGameBoard board = KalahGameBoardStandard.INSTANCE;
+	static final KalahGameBoard BOARD = KalahGameBoardStandard.INSTANCE;
 
 	@Override
 	public boolean isValid(Integer value, ConstraintValidatorContext context) {
-		if (!board.getAllPlayerPits().contains(value)) {
+		if (!BOARD.getAllPlayerPits().contains(value)) {
 			throw new KalahClientException("Invalid pit number, only values 1-6 or 7-13 are allowed");
 		}
 		return true;

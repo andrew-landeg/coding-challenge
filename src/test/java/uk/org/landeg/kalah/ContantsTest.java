@@ -1,15 +1,17 @@
 package uk.org.landeg.kalah;
 
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.org.landeg.kalah.Constants.Player;
 
-public class ContantsTest {
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class ConstantsTest {
 	@Test
-	public void assertPlayerOpponent() {
-		Assert.assertTrue(Player.SOUTH.getOpponent().equals(Player.NORTH));
-		Assert.assertTrue(Player.NORTH.getOpponent().equals(Player.SOUTH));
+	void assertPlayerOpponent() {
+		assertThat(Player.SOUTH.getOpponent()).isEqualTo(Player.NORTH);
+		assertThat(Player.NORTH.getOpponent()).isEqualTo(Player.SOUTH);
 	}
 }

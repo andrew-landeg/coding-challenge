@@ -1,5 +1,6 @@
 package uk.org.landeg.kalah.api.transformer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,11 +9,9 @@ import uk.org.landeg.kalah.api.model.PerformMoveResponseModel;
 import uk.org.landeg.kalah.components.KalahGameState;
 import uk.org.landeg.kalah.exception.KalahException;
 
+@Slf4j
 @RestTransformer(restEntity = PerformMoveResponseModel.class)
 public class PerformMoveResponseTransformer implements RestEntityTransformer<PerformMoveResponseModel, KalahGameState> {
-	Logger log = LoggerFactory.getLogger(this.getClass());
-	
-
 	/**
 	 * Construct a {@link PerformMoveResponseModel} from a {@link KalahGameState}
 	 * @param game source object
@@ -27,9 +26,7 @@ public class PerformMoveResponseTransformer implements RestEntityTransformer<Per
 		final PerformMoveResponseModel response = new PerformMoveResponseModel()
 				.withId(game.getGameId())
 				.withUri(game.getUrl());
-		game.getPits().entrySet().forEach(e -> {
-			response.withPitStatus(e.getKey(), e.getValue());
-		});
+		game.getPits().entrySet().forEach(e -> response.withPitStatus(e.getKey(), e.getValue()));
 		return response;
 	}
 }

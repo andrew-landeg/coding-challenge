@@ -2,19 +2,21 @@ package uk.org.landeg.kalah.persistence;
 
 import java.util.function.Function;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.org.landeg.kalah.Constants.Player;
 import uk.org.landeg.kalah.components.KalahGameState;
 
-@RunWith(SpringRunner.class)
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class TestPersistenceServiceJpa {
+class TestPersistenceServiceJpa {
 	@Autowired
 	PersistenceService persistenceService;
 
@@ -22,7 +24,7 @@ public class TestPersistenceServiceJpa {
 	final Function<Integer, Integer> stoneCountProducerBase11 = pitId -> pitId % 11;
 
 	@Test
-	public void assertRetrievedRecord() {
+	void assertRetrievedRecord() {
 		final Integer expectedRecentPit = 3;
 		final boolean expectedInProgress = true;
 		final String expectedUrl = "http://dont-care-where.com/games/9871298372"; 
@@ -38,19 +40,19 @@ public class TestPersistenceServiceJpa {
 		
 		game = persistenceService.findById(game.getGameId())
 				.orElseThrow(() -> new AssertionError("game cannot be retrieved"));
-		Assert.assertNotNull(game);
-		Assert.assertEquals(expectedRecentPit, game.getRecentPit());
-		Assert.assertEquals(Player.SOUTH, game.getCurrentPlayer());
-		Assert.assertEquals(Player.SOUTH, game.getWinner());
-		Assert.assertEquals(expectedInProgress, game.isInProgress());
-		Assert.assertEquals(expectedUrl, game.getUrl());
+		assertThat(game).isNotNull();
+		assertThat(expectedRecentPit).isEqualTo(game.getRecentPit());
+		assertThat(Player.SOUTH).isEqualTo(game.getCurrentPlayer());
+		assertThat(Player.SOUTH).isEqualTo(game.getWinner());
+		assertThat(expectedInProgress).isEqualTo(game.isInProgress());
+		assertThat(expectedUrl).isEqualTo(game.getUrl());
 		for (int pitId = 1; pitId <= 14 ; pitId++) {
-			Assert.assertEquals(stoneCountProducerBase7.apply(pitId), game.getPits().get(pitId));
+			assertEquals(stoneCountProducerBase7.apply(pitId), game.getPits().get(pitId));
 		}
 	}
 
 	@Test
-	public void assertUpdateRecord() {
+	void assertUpdateRecord() {
 		final Integer expectedRecentPit = 3;
 		final boolean expectedInProgress = true;
 		final Player expectedPlayer = Player.SOUTH;
@@ -79,13 +81,13 @@ public class TestPersistenceServiceJpa {
 		for (int idx = 1 ; idx <= 14; idx++) game.getPits().put(idx,stoneCountProducerBase11.apply(idx));
 
 		game = persistenceService.save(game);
-		Assert.assertEquals(updatedRecentPit, game.getRecentPit());
-		Assert.assertEquals(updatedPlayer, game.getCurrentPlayer());
-		Assert.assertEquals(updatedInProgress, game.isInProgress());
-		Assert.assertEquals(updatedUrl, game.getUrl());
+		assertThat(updatedRecentPit).isEqualTo(game.getRecentPit());
+		assertThat(updatedPlayer).isEqualTo(game.getCurrentPlayer());
+		assertThat(updatedInProgress).isEqualTo(game.isInProgress());
+		assertThat(updatedUrl).isEqualTo(game.getUrl());
 
 		for (int pitId = 1; pitId <= 14 ; pitId++) {
-			Assert.assertEquals(stoneCountProducerBase11.apply(pitId), game.getPits().get(pitId));
+			assertEquals(stoneCountProducerBase11.apply(pitId), game.getPits().get(pitId));
 		}
 		
 	}
