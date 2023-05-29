@@ -15,8 +15,12 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import uk.org.landeg.kalah.Constants.Player;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name="game_state")
 public class GameStateJpa {
@@ -45,81 +49,4 @@ public class GameStateJpa {
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="game")
 	@MapKey(name="pitId")
 	Map<Integer, PitStateJpa> pits = new HashMap<>();
-	
-	public Long getGameId() {
-		return gameId;
-	}
-
-	public void setGameId(Long gameId) {
-		this.gameId = gameId;
-	}
-
-	public Player getCurrentPlayer() {
-		return currentPlayer;
-	}
-
-	public void setCurrentPlayer(Player currentPlayer) {
-		this.currentPlayer = currentPlayer;
-	}
-
-	public Boolean getInProgress() {
-		return inProgress;
-	}
-
-	public void setInProgress(Boolean inProgress) {
-		this.inProgress = inProgress;
-	}
-
-	public Player getWinner() {
-		return winner;
-	}
-
-	public void setWinner(Player winner) {
-		this.winner = winner;
-	}
-
-	public Integer getRecentPit() {
-		return recentPit;
-	}
-
-	public void setRecentPit(Integer recentPit) {
-		this.recentPit = recentPit;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public Map<Integer, PitStateJpa> getPits() {
-		return pits;
-	}
-
-	public void setPits(Map<Integer, PitStateJpa> pits) {
-		this.pits = pits;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("GameStateJpa [gameId=");
-		builder.append(gameId);
-		builder.append(", currentPlayer=");
-		builder.append(currentPlayer);
-		builder.append(", inProgress=");
-		builder.append(inProgress);
-		builder.append(", winner=");
-		builder.append(winner);
-		builder.append(", recentPit=");
-		builder.append(recentPit);
-		builder.append(", url=");
-		builder.append(url);
-		builder.append(", pits=");
-		builder.append(pits);
-		builder.append("]");
-		return builder.toString();
-	}
 }

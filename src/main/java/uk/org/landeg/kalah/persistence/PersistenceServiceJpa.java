@@ -2,6 +2,7 @@ package uk.org.landeg.kalah.persistence;
 
 import java.util.Optional;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +18,12 @@ import uk.org.landeg.kalah.persistence.domain.GameStateJpa;
  *
  */
 @Service
+@RequiredArgsConstructor
 public class PersistenceServiceJpa implements PersistenceService {
-	@Autowired
-    GameStateRepository repo;
+    private final GameStateRepository repo;
 
-	@Autowired
 	@JpaTransformerComponent(GameStateJpa.class)
-	JpaTransformer<GameStateJpa, KalahGameState> gameStateTransformer;
+	private final JpaTransformer<GameStateJpa, KalahGameState> gameStateTransformer;
 	
 	/**
 	 * Find the game state with the specified ID

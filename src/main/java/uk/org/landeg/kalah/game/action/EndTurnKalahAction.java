@@ -1,7 +1,6 @@
 package uk.org.landeg.kalah.game.action;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +14,8 @@ import uk.org.landeg.kalah.components.KalahGameState;
  */
 @Order(1000)
 @Component
+@Slf4j
 public class EndTurnKalahAction implements KalahAction {
-	Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	public boolean applies(KalahGameState game) {

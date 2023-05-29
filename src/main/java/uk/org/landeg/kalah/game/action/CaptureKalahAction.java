@@ -1,7 +1,7 @@
 package uk.org.landeg.kalah.game.action;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
@@ -23,11 +23,10 @@ import uk.org.landeg.kalah.game.KalahPitDecorator;
  */
 @Component
 @Order(200)
+@Slf4j
+@RequiredArgsConstructor
 public class CaptureKalahAction implements KalahAction {
-	Logger log = LoggerFactory.getLogger(this.getClass());
-
-	@Autowired	
-	private KalahGameBoard gameBoard;
+	private final KalahGameBoard gameBoard;
 	
 	@Value("#{new Boolean('${rule.capture_empty_pit.enabled}')}")
 	private Boolean allowCaptureOnEmptyOponent;
@@ -54,7 +53,7 @@ public class CaptureKalahAction implements KalahAction {
 			return false;
 		}
 
-		if (allowCaptureOnEmptyOponent) {
+		if (Boolean.TRUE.equals(allowCaptureOnEmptyOponent)) {
 			return true;
 		}
 

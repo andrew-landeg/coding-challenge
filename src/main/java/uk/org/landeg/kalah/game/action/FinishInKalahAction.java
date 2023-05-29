@@ -1,7 +1,7 @@
 package uk.org.landeg.kalah.game.action;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -11,15 +11,15 @@ import uk.org.landeg.kalah.game.KalahGameBoard;
 
 @Order(100)
 @Component
+@Slf4j
+@RequiredArgsConstructor
 public class FinishInKalahAction implements KalahAction{
-	Logger log = LoggerFactory.getLogger(this.getClass());
-	
-	@Autowired
-	KalahGameBoard board;
+	private final KalahGameBoard board;
 
 	@Override
 	public boolean applies(KalahGameState game) {
-		return (game.getRecentPit() == board.getPlayerKalah().get(game.getCurrentPlayer()));
+		var pit = board.getPlayerKalah().get(game.getCurrentPlayer());
+		return (game.getRecentPit().equals(pit));
 	}
 
 	/**

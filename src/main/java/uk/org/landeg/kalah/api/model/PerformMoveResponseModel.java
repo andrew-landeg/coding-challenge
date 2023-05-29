@@ -1,5 +1,9 @@
 package uk.org.landeg.kalah.api.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,12 +13,12 @@ import java.util.Map;
  * @author Andrew Landeg
  *
  */
+@NoArgsConstructor
+@ToString
 public class PerformMoveResponseModel extends CreateGameResponseModel {
+	@Getter
 	private Map<String, String> status = new HashMap<>();
 
-	public Map<String, String> getStatus() {
-		return status;
-	}
 	public void setStatus(Map<String, String> status) {
 		this.status = status;
 	}

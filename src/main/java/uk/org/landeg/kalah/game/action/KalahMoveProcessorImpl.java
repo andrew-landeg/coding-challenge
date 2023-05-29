@@ -2,6 +2,7 @@ package uk.org.landeg.kalah.game.action;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +12,9 @@ import uk.org.landeg.kalah.game.KalahGameBoard;
 import uk.org.landeg.kalah.game.KalahPitDecorator;
 
 @Component
+@RequiredArgsConstructor
 public class KalahMoveProcessorImpl implements KalahMoveProcessor{
-	@Autowired
-	KalahGameBoard gameBoard;
+	private final KalahGameBoard gameBoard;
 
 	@Override
 	public void processMove(KalahGameState game, int pitId) {

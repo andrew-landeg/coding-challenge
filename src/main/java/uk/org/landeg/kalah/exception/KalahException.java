@@ -1,6 +1,9 @@
 package uk.org.landeg.kalah.exception;
 
+import lombok.Getter;
+
 public class KalahException extends RuntimeException {
+	@Getter
 	private final String type;
 
 	public KalahException(String message) {
@@ -11,11 +14,4 @@ public class KalahException extends RuntimeException {
 		super(message);
 		this.type = type;
 	}
-	
-	public String getType() {
-		return type;
-	}
-
-	private static final long serialVersionUID = -3080322494968413507L;
-
 }

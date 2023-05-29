@@ -1,27 +1,23 @@
 package uk.org.landeg.kalah.game.action;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.org.landeg.kalah.CommonTestConfiguration;
 import uk.org.landeg.kalah.Constants.Player;
 import uk.org.landeg.kalah.components.KalahGameState;
 
-@RunWith(SpringRunner.class)
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(SpringExtension.class)
 @Import(CommonTestConfiguration.class)
-public class EndTurnKalahActionTest {
+class EndTurnKalahActionTest {
 	@TestConfiguration
 	static class Config {
 		@Bean
@@ -34,12 +30,12 @@ public class EndTurnKalahActionTest {
 	KalahAction action;
 
 	@Test
-	public void assertRuleAlwaysApplies() {
-		Assert.assertTrue(action.applies(new KalahGameState()));
+	void assertRuleAlwaysApplies() {
+		assertTrue(action.applies(new KalahGameState()));
 	}
 
 	@Test
-	public void assertOpponentsTurnWhenApplied() {
+	void assertOpponentsTurnWhenApplied() {
 		KalahGameState game = Mockito.mock(KalahGameState.class);
 		when(game.getCurrentPlayer()).thenReturn(Player.SOUTH);
 		action.processAction(game);

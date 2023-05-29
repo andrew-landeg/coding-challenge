@@ -1,18 +1,11 @@
 package uk.org.landeg.kalah.game;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.org.landeg.kalah.CommonTestConfiguration;
 import uk.org.landeg.kalah.Constants.Player;
 import uk.org.landeg.kalah.components.KalahGameState;
@@ -20,9 +13,13 @@ import uk.org.landeg.kalah.exception.KalahClientException;
 import uk.org.landeg.kalah.game.action.KalahAction;
 import uk.org.landeg.kalah.game.action.KalahMoveProcessor;
 
-@RunWith(SpringRunner.class)
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(SpringExtension.class)
 @Import(CommonTestConfiguration.class)
-public class KalahGameEngineTest {
+class KalahGameEngineTest {
 	@Autowired
 	KalahGameBoard gameBoard;
 	
@@ -41,23 +38,23 @@ public class KalahGameEngineTest {
 	 * All pits should have intial stones, kalah should have zero.
 	 */
 	@Test
-	public void assertGameInitAsExpected() {
+	void assertGameInitAsExpected() {
 		final KalahGameState game = new KalahGameState();
 		gameService.initialiseGame(game);
 		game.getPits().entrySet().forEach(pitEntry -> {
 			int expectedValue = 
 					gameBoard.isKalah(pitEntry.getKey()) ? 0 : KalahGameBoardStandard.DEFAULT_INIT_STONES;
 			int actualValue = pitEntry.getValue();
-			Assert.assertEquals(expectedValue, actualValue);
+			assertEquals(expectedValue, actualValue);
 		});
-		Assert.assertEquals(0, game.getPits().get(gameBoard.getPlayerKalah().get(Player.NORTH)).intValue());
-		Assert.assertEquals(0, game.getPits().get(gameBoard.getPlayerKalah().get(Player.SOUTH)).intValue());
-		Assert.assertTrue(game.isInProgress());
-		Assert.assertEquals(Player.SOUTH, game.getCurrentPlayer());
+		assertThat(0).isEqualTo(game.getPits().get(gameBoard.getPlayerKalah().get(Player.NORTH)).intValue());
+		assertThat(0).isEqualTo(game.getPits().get(gameBoard.getPlayerKalah().get(Player.SOUTH)).intValue());
+		assertTrue(game.isInProgress());
+		assertThat(Player.SOUTH).isEqualTo(game.getCurrentPlayer());
 	}
 
 	@Test
-	public void assertProcessActionInvokedWhenApplicable() {
+	void assertProcessActionInvokedWhenApplicable() {
 		final KalahGameState game = new KalahGameState();
 		when(mockAction.applies(game)).thenReturn(true);
 		gameService.initialiseGame(game);
@@ -67,7 +64,7 @@ public class KalahGameEngineTest {
 	}
 
 	@Test
-	public void assertProcessActionNotInvokedWhenNotApplicable() {
+	void assertProcessActionNotInvokedWhenNotApplicable() {
 		final KalahGameState game = new KalahGameState();
 		when(mockAction.applies(game)).thenReturn(false);
 		gameService.initialiseGame(game);
@@ -77,7 +74,7 @@ public class KalahGameEngineTest {
 	}
 
 	@Test
-	public void assertProcessMoveInvokedWhenAllowed() {
+	void assertProcessMoveInvokedWhenAllowed() {
 		final KalahGameState game = new KalahGameState();
 		gameService.initialiseGame(game);
 		gameService.performMove(game, 1);
@@ -85,35 +82,37 @@ public class KalahGameEngineTest {
 	}
 
 	@Test
-	public void assertSouthPlayerInferredWhenNoPlayerSet() {
+	void assertSouthPlayerInferredWhenNoPlayerSet() {
 		final KalahGameState game = new KalahGameState();
 		gameService.initialiseGame(game);
 		game.setCurrentPlayer(null);
 		gameService.performMove(game, 1);
 		// stays south because we're not using the processors to change to north at turn end.
-		Assert.assertEquals(Player.SOUTH, game.getCurrentPlayer());
+		assertThat(Player.SOUTH).isEqualTo(game.getCurrentPlayer());
 	}
 
-	@Test(expected=KalahClientException.class)
-	public void assertClientExceptionOnGameEnded() {
+	@Test
+	void assertClientExceptionOnGameEnded() {
 		final KalahGameState game = new KalahGameState();
 		gameService.initialiseGame(game);
 		game.setInProgress(false);
-		gameService.performMove(game, 1);
+		assertThrows(KalahClientException.class, () -> gameService.performMove(game, 1));
 	}
 
-	@Test(expected=KalahClientException.class)
-	public void assertClientExceptionOnOpponentsPit() {
+	@Test
+	void assertClientExceptionOnOpponentsPit() {
 		final KalahGameState game = new KalahGameState();
 		gameService.initialiseGame(game);
-		gameService.performMove(game, gameBoard.getPlayerPits().get(Player.NORTH).get(0));
+		var pitForMove = gameBoard.getPlayerPits().get(Player.NORTH).get(0);
+		assertThrows(KalahClientException.class,
+				() -> gameService.performMove(game, pitForMove));
 	}
 
-	@Test(expected=KalahClientException.class)
-	public void assertClientExceptionOnEmptyPitMove() {
+	@Test
+	void assertClientExceptionOnEmptyPitMove() {
 		final KalahGameState game = new KalahGameState();
 		gameService.initialiseGame(game);
 		game.getPits().take(1);
-		gameService.performMove(game, 1);
+		assertThrows(KalahClientException.class, () -> gameService.performMove(game, 1));
 	}
 }

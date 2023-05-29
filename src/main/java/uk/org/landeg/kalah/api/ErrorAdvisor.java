@@ -1,5 +1,6 @@
 package uk.org.landeg.kalah.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
@@ -14,10 +15,9 @@ import uk.org.landeg.kalah.exception.KalahClientException;
 import uk.org.landeg.kalah.exception.KalahException;
 import uk.org.landeg.kalah.exception.KalahGameNotFoundException;
 
+@Slf4j
 @RestControllerAdvice
 public class ErrorAdvisor {
-	Logger log = LoggerFactory.getLogger(this.getClass());
-
 	@Order(100)
 	@ResponseStatus(code=HttpStatus.NOT_FOUND)
 	@ExceptionHandler(KalahGameNotFoundException.class)

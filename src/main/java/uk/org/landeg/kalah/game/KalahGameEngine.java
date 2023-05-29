@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +27,12 @@ import uk.org.landeg.kalah.game.action.KalahMoveProcessor;
  *
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class KalahGameEngine {
-	Logger log = LoggerFactory.getLogger(KalahGameEngine.class);
-
-	@Autowired
-	KalahGameBoard gameBoard;
-	
-	@Autowired
-	List<KalahAction> kalahActions;
-
-	@Autowired
-	KalahMoveProcessor moveProcessor;
+	private final KalahGameBoard gameBoard;
+	private final List<KalahAction> kalahActions;
+	private final KalahMoveProcessor moveProcessor;
 
 	private List<KalahAction> exclusiveActions = new ArrayList<>();
 	private List<KalahAction> independentActions = new ArrayList<>();
@@ -47,8 +44,7 @@ public class KalahGameEngine {
 	@PostConstruct
 	public void initialiseProcessors() {
 		// would have been nice to discriminate by qualifier rather than sorting here...
-		// TODO - investigate how to create mocks with qualifiers
-		kalahActions.forEach(action -> 
+		kalahActions.forEach(action ->
 			(action.isMutuallyExclusive() ? exclusiveActions : independentActions).add(action));
 	}
 
@@ -79,7 +75,6 @@ public class KalahGameEngine {
 			game.setCurrentPlayer(currentPlayer);
 		}
 
-		//TODO : consider implementing these as an interface and separate out of this class. 
 		if (!game.isInProgress()) {
 			throw new KalahClientException("That game has already ended");
 		}

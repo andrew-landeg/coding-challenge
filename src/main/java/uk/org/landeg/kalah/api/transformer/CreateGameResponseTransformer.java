@@ -1,5 +1,6 @@
 package uk.org.landeg.kalah.api.transformer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +15,9 @@ import uk.org.landeg.kalah.exception.KalahException;
  * @author Andrew Landeg
  *
  */
+@Slf4j
 @RestTransformer(restEntity=CreateGameResponseModel.class)
 public class CreateGameResponseTransformer implements RestEntityTransformer<CreateGameResponseModel, KalahGameState>{
-	Logger log = LoggerFactory.getLogger(this.getClass());
-
 	/**
 	 * {@inheritDoc}
 	 */

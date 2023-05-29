@@ -1,14 +1,16 @@
 package uk.org.landeg.kalah.persistence;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.org.landeg.kalah.Constants.Player;
 import uk.org.landeg.kalah.components.KalahGameState;
 import uk.org.landeg.kalah.persistence.domain.GameStateJpa;
 import uk.org.landeg.kalah.persistence.domain.PitStateJpa;
 
-public class GameStateTransformerTest {
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class GameStateTransformerTest {
 	final GameStateJpaTransformer transformer = new GameStateJpaTransformer();
 
 	// test fixtures...
@@ -22,7 +24,7 @@ public class GameStateTransformerTest {
 	
 
 	@Test
-	public void assertToJpaSuccessful() {
+	void assertToJpaSuccessful() {
 		final KalahGameState business = new KalahGameState();
 		business.setCurrentPlayer(expectedPlayer);
 		business.setInProgress(expectedInProgress);
@@ -34,20 +36,20 @@ public class GameStateTransformerTest {
 		
 		final GameStateJpa jpa = transformer.toJpa(business, null);
 
-		Assert.assertNotNull(jpa);
-		Assert.assertEquals(expectedUrl, jpa.getUrl());
-		Assert.assertEquals(expectedInProgress, jpa.getInProgress());
-		Assert.assertEquals(expectedPlayer, jpa.getCurrentPlayer());
-		Assert.assertEquals(expectedRecentPit, jpa.getRecentPit());
-		Assert.assertEquals(expectedId, jpa.getGameId());
+		assertThat(jpa).isNotNull();
+		assertThat(expectedUrl).isEqualTo(jpa.getUrl());
+		assertThat(expectedInProgress).isEqualTo(jpa.getInProgress());
+		assertThat(expectedPlayer).isEqualTo(jpa.getCurrentPlayer());
+		assertThat(expectedRecentPit).isEqualTo(jpa.getRecentPit());
+		assertThat(expectedId).isEqualTo(jpa.getGameId());
 		
-		Assert.assertEquals(1, jpa.getPits().size());
-		Assert.assertEquals(expectedStoneCount, jpa.getPits().get(expectedPitId).getStones().intValue());
+		assertThat(1).isEqualTo(jpa.getPits().size());
+		assertThat(expectedStoneCount).isEqualTo(jpa.getPits().get(expectedPitId).getStones().intValue());
 	}
 
 
 	@Test
-	public void assertFromJpaSuccessful() {
+	void assertFromJpaSuccessful() {
 		final GameStateJpa jpa = new GameStateJpa();
 		jpa.setCurrentPlayer(expectedPlayer);
 		jpa.setInProgress(expectedInProgress);
@@ -59,14 +61,14 @@ public class GameStateTransformerTest {
 		jpa.getPits().put(expectedPitId, pit);
 		
 		final KalahGameState gameState = transformer.fromJpa(jpa, null);
-		Assert.assertNotNull(gameState);
-		Assert.assertEquals(expectedUrl, gameState.getUrl());
-		Assert.assertEquals(expectedInProgress, gameState.isInProgress());
-		Assert.assertEquals(expectedPlayer, gameState.getCurrentPlayer());
-		Assert.assertEquals(expectedRecentPit, gameState.getRecentPit());
-		Assert.assertEquals(expectedId, gameState.getGameId());
-		Assert.assertEquals(1, gameState.getPits().size());
-		Assert.assertTrue(gameState.getPits().containsKey(expectedPitId));
-		Assert.assertEquals(expectedStoneCount, gameState.getPits().get(expectedPitId).intValue());
+		assertThat(gameState).isNotNull();
+		assertThat(expectedUrl).isEqualTo(gameState.getUrl());
+		assertThat(expectedInProgress).isEqualTo(gameState.isInProgress());
+		assertThat(expectedPlayer).isEqualTo(gameState.getCurrentPlayer());
+		assertThat(expectedRecentPit).isEqualTo(gameState.getRecentPit());
+		assertThat(expectedId).isEqualTo(gameState.getGameId() );
+		assertThat(1).isEqualTo(gameState.getPits().size());
+		assertTrue(gameState.getPits().containsKey(expectedPitId));
+		assertThat(expectedStoneCount).isEqualTo(gameState.getPits().get(expectedPitId).intValue());
 	}
 }

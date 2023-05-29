@@ -18,9 +18,6 @@ public class PredeterminedDomainRequestUriResolver implements RequestUriResolver
 	@Value("${server.location.url}")
 	private String domain;
 
-	public PredeterminedDomainRequestUriResolver() {
-	}
-
 	@Override
 	public String resolve() {
 		return domain;

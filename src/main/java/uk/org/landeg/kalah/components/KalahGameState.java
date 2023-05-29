@@ -1,5 +1,8 @@
 package uk.org.landeg.kalah.components;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -13,6 +16,9 @@ import uk.org.landeg.kalah.game.KalahPitDecorator;
  * @author Andrew Landeg
  *
  */
+@Slf4j
+@NoArgsConstructor
+@Data
 @Component
 @Scope(proxyMode=ScopedProxyMode.TARGET_CLASS, scopeName="SCOPE_PROTOTYPE")
 public class KalahGameState {
@@ -47,47 +53,4 @@ public class KalahGameState {
 	 * url for this game. 
 	 */
 	private String url;
-
-	public KalahPitDecorator getPits() {
-		return pits;
-	}
-	public void setPits(KalahPitDecorator pits) {
-		this.pits = pits;
-	}
-	public Player getCurrentPlayer() {
-		return currentPlayer;
-	}
-	public void setCurrentPlayer(Player currentPlayer) {
-		this.currentPlayer = currentPlayer;
-	}
-	public Long getGameId() {
-		return gameId;
-	}
-	public void setGameId(Long gameId) {
-		this.gameId = gameId;
-	}
-	public boolean isInProgress() {
-		return inProgress;
-	}
-	public void setInProgress(boolean inProgress) {
-		this.inProgress = inProgress;
-	}
-	public void setWinner(Player winner) {
-		this.winner = winner;
-	}
-	public Player getWinner() {
-		return winner;
-	}
-	public String getUrl() {
-		return url;
-	}
-	public void setUrl(String url) {
-		this.url = url;
-	}
-	public Integer getRecentPit() {
-		return recentPit;
-	}
-	public void setRecentPit(Integer recentPit) {
-		this.recentPit = recentPit;
-	}
 }

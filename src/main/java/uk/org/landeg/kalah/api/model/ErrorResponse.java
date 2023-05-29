@@ -1,5 +1,6 @@
 package uk.org.landeg.kalah.api.model;
 
+import lombok.Getter;
 import uk.org.landeg.kalah.exception.KalahException;
 
 /**
@@ -9,6 +10,7 @@ import uk.org.landeg.kalah.exception.KalahException;
  *
  */
 
+@Getter
 public class ErrorResponse {
 	private final String message;
 
@@ -18,13 +20,4 @@ public class ErrorResponse {
 		this.message = ex.getMessage();
 		this.type = ex.getType();
 	}
-	
-	public String getMessage() {
-		return message;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	
 }
